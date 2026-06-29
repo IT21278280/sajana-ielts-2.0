@@ -1,0 +1,42 @@
+{
+  "projectId": "prj_sajana_ielts_2",
+  "name": "sajana-ielts-2.0",
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
+  "env": {
+    "DATABASE_URL": {
+      "description": "PostgreSQL database URL from Railway/Render"
+    },
+    "NEXT_PUBLIC_SANITY_PROJECT_ID": {
+      "value": "cg5cn9q5"
+    },
+    "NEXT_PUBLIC_SANITY_DATASET": {
+      "value": "production"
+    },
+    "SANITY_API_TOKEN": {
+      "description": "API token from Sanity project settings - keep secret"
+    },
+    "NODE_ENV": {
+      "value": "production"
+    }
+  },
+  "functions": {
+    "api/**/*.ts": {
+      "memory": 1024,
+      "maxDuration": 60
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    }
+  ]
+}
