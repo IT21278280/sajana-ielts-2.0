@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  SUPERADMIN
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(ADMIN)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([role])
+}
+
+model Lead {
+  id              String   @id @default(cuid())
+  studentName     String
+  phone           String
+  email           String
+  targetBandScore Decimal  @db.Decimal(2, 1)
+  message         String   @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([createdAt])
+}
+
+model StudentResult {
+  id                String   @id @default(cuid())
+  studentName       String
+  overallBandScore  Decimal  @db.Decimal(2, 1)
+  speakingBandScore Decimal  @db.Decimal(2, 1)
+  writingBandScore  Decimal  @db.Decimal(2, 1)
+  readingBandScore  Decimal  @db.Decimal(2, 1)
+  listeningBandScore Decimal @db.Decimal(2, 1)
+  notes             String?  @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  testimonials Testimonial[]
+
+  @@index([overallBandScore])
+  @@index([createdAt])
+}
+
+model Testimonial {
+  id               String    @id @default(cuid())
+  studentName      String
+  quote            String    @db.Text
+  targetBandScore  Decimal?  @db.Decimal(2, 1)
+  achievedBandScore Decimal? @db.Decimal(2, 1)
+  isPublished      Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  studentResultId String?
+  studentResult   StudentResult? @relation(fields: [studentResultId], references: [id], onDelete: SetNull)
+
+  @@index([isPublished])
+  @@index([studentResultId])
+}
